@@ -6,6 +6,8 @@
 //	https://github.com/anthonynosek/sprint-reader-chrome/blob/master/LICENSE
 //
 //------------------------------------------------------------------------------
+//Browser Compatibility
+window.browser = window.browser || window.chrome || window.msBrowser;
 
 // This file contains generic utility functions and
 // all the advanced settings used to control the
@@ -145,7 +147,7 @@ function getMoreAdvancedSettingsDefaults() {
 
 // Obtain the version number of the chrome extension and display
 function displayVersion() {
-	var version = chrome.app.getDetails().version;
+	var version = browser.runtime.getManifest().version;
 	var divVersion = document.getElementById('version');
 	divVersion.innerHTML = "<br><b>Sprint Reader</b> (v" + version + ")";
 }

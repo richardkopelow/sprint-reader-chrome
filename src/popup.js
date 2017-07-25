@@ -6,6 +6,8 @@
 //	https://github.com/anthonynosek/sprint-reader-chrome/blob/master/LICENSE
 //
 //------------------------------------------------------------------------------
+//Browser Compatibility
+window.browser = window.browser || window.chrome || window.msBrowser;
 
 // Initialise the popup (popup.html) screen
 // This screen (popup.html) is opened when the user clicks on the 
@@ -33,7 +35,7 @@ function setTabHeight() {
 window.onload = function() {
 	var a = document.getElementById("openReader");
 	a.onclick = function() {	
-		chrome.runtime.sendMessage({ message: "openReaderFromPopup" });	
+		browser.runtime.sendMessage({ message: "openReaderFromPopup" });	
 		//background.openReaderWindow();	
 		close();	
 		return false;

@@ -6,6 +6,8 @@
 //	https://github.com/anthonynosek/sprint-reader-chrome/blob/master/LICENSE
 //
 //------------------------------------------------------------------------------
+//Browser Compatibility
+window.browser = window.browser || window.chrome || window.msBrowser;
 
 var readerHeightPercentOfScreen = 0.53;
 var readerWidthPercentOfScreen = 0.70;
@@ -14,21 +16,20 @@ var readerWidthPercentOfScreen = 0.70;
 var readerWindow;
 
 // Chrome versioning for communication events
-if (!chrome.runtime) {
+if (!browser.runtime) {
     // Chrome 20-21
-    chrome.runtime = chrome.extension;
-} else if(!chrome.runtime.onMessage) {
+    browser.runtime = browser.extension;
+} else if(!browser.runtime.onMessage) {
     // Chrome 22-25
-    chrome.runtime.onMessage = chrome.extension.onMessage;
-    chrome.runtime.sendMessage = chrome.extension.sendMessage;
-    chrome.runtime.onConnect = chrome.extension.onConnect;
-    chrome.runtime.connect = chrome.extension.connect;
+    browser.runtime.onMessage = browser.extension.onMessage;
+    browser.runtime.sendMessage = browser.extension.sendMessage;
+    browser.runtime.onConnect = browser.extension.onConnect;
+    browser.runtime.connect = browser.extension.connect;
 }
 
 function openReaderWindowFromContext(context) {
-	if (context.selectionText) {
+	if (haveSelection) {
 		// Save the selected text to local storage
-		var selectedText = context.selectionText;
 		var selectedTextEncoded = htmlEntitiesEncode(selectedText);
 		saveSelectedTextToResource(selectedTextEncoded);
 		localStorage.setItem("selectedText", selectedTextEncoded);
@@ -74,14 +75,21 @@ function openReaderWindow() {
 	width = parseInt(width);
     height = parseInt(height);
 	
-  	openReader("reader.html", "", width, height, top, left);
+  	openReader("src/reader.html", "", width, height, Math.round(top), Math.round(left));
 }
 
 function openReader(url, title, w, h, t, l) {
 	// Only open a new window if one does not already exist
 	if (readerWindow == null) {
 		// Open a new reader
-		readerWindow = window.open(url, title, 'toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=no, resizable=no, copyhistory=no, width='+w+', height='+h+', top='+t+', left='+l);
+		readerWindow = browser.windows.create({
+			url: browser.extension.getURL(url),
+			width: w,
+			height: h,
+			top: t,
+			left: l,
+			type: "panel"
+		});
 	}
 	else {
 		// Refresh the existing reader window
@@ -103,7 +111,7 @@ for (var i = 0; i < contexts.length; i++) {
 		title = "Sprint read last saved selection";
 	}
 	
-	chrome.contextMenus.create({
+	browser.contextMenus.create({
 							"title": title, 
 							"contexts": [context],
 							"onclick": openReaderWindowFromContext
@@ -113,7 +121,7 @@ for (var i = 0; i < contexts.length; i++) {
 // -------------------------------------------------------------
 // Listener for window close
 // We save the selected text to the first history position
-chrome.windows.onRemoved.addListener(function(windowId) {   
+browser.windows.onRemoved.addListener(function(windowId) {   
 	readerWindow = null;
 });
 
@@ -123,7 +131,7 @@ var selectedText;
 var haveSelection;
 
 // -------------------------------------------------------------
-chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
+browser.runtime.onMessage.addListener(function(request, sender, sendResponse) {
 	// Reset the selected text
 	selectedText = "";	
 	dirRTL = false;
@@ -160,7 +168,7 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
 // -------------------------------------------------------------
 var mouseY;
 var mouseX;
-chrome.commands.onCommand.addListener(function(command) {	
+browser.commands.onCommand.addListener(function(command) {	
 	// Listening for commands
  	if (command == 'sprint-read-shortcut') {
 		// User has hit CTRL+SHIFT+Z on the keyboard
@@ -174,8 +182,8 @@ chrome.commands.onCommand.addListener(function(command) {
 			// No selection of text exists so we try and obtain a selection
 			// using the mouse location as a guide, i.e. select text block at cursor
 			// Ask the browser for the mouse coordinates
-			chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-				chrome.tabs.sendMessage(tabs[0].id, {action:'getMouseCoordinates'}, function(response) {
+			browser.tabs.query({active: true, currentWindow: true}, function(tabs) {
+				browser.tabs.sendMessage(tabs[0].id, {action:'getMouseCoordinates'}, function(response) {
 					mouseX = response.x;
 					mouseY = response.y;
 				}); 
@@ -202,18 +210,17 @@ if (currVersion != prevVersion) {
 }
 
 function getVersion() {
-	var details = chrome.app.getDetails();
-	return details.version;
+	return browser.runtime.getManifest().version;
 }
 
 // Function is fired on initial install
 function onInstall() {
-	chrome.tabs.create({url: "src/welcome.html"});
+	browser.tabs.create({url: "src/welcome.html"});
 }
 
 // Function is fired after an update
 function onUpdate() {
-	chrome.tabs.create({url: "src/updated.html"});
+	browser.tabs.create({url: "src/updated.html"});
 }
 
 // -------------------------------------------------------------

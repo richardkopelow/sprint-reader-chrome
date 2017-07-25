@@ -6,6 +6,8 @@
 //	https://github.com/anthonynosek/sprint-reader-chrome/blob/master/LICENSE
 //
 //------------------------------------------------------------------------------
+//Browser Compatibility
+window.browser = window.browser || window.chrome || window.msBrowser;
 
 // This file has a dependency on engine.js
 // engine.js contains all the logic to split the selected
@@ -588,13 +590,13 @@ function loadSelectedTextHistory(historyid) {
 
 // Load the text in the clipboard
 function getClipboardContentsAsText() {
-	var clipboardContents = chrome.extension.getBackgroundPage().paste();
+	var clipboardContents = browser.extension.getBackgroundPage().paste();
 	return clipboardContents.toString();
 }
 
 // Reshuffle the history items in local storage and
 // save local storage. Three selected text history items are saved
-// Function location in background.js chrome.windows.onRemoved.addListener
+// Function location in background.js browser.windows.onRemoved.addListener
 
 function displaySettings() {
 	// Display the user settings on the settings screen	
@@ -1911,7 +1913,7 @@ function saveSelectedTextPosition() {
 // Display more advanced settings which control the algorithm
 function displayMoreAdvancedSettings() {
 	// Load the advanced settings tab
-	chrome.tabs.create({url: "src/advanced.html"});	
+	browser.tabs.create({url: "src/advanced.html"});	
 }
 
 document.addEventListener("DOMContentLoaded", init, false);

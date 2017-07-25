@@ -6,6 +6,8 @@
 //	https://github.com/anthonynosek/sprint-reader-chrome/blob/master/LICENSE
 //
 //------------------------------------------------------------------------------
+//Browser Compatibility
+window.browser = window.browser || window.chrome || window.msBrowser;
 
 // This event is triggered on mouseup
 document.addEventListener('mouseup',function(event) {
@@ -31,16 +33,16 @@ function passSelectionToBackground(selectedText, openReaderAlso) {
 	// Send a message back to the background page
 	// The message is any valid JSON string
 	if (openReaderAlso) {
-		chrome.runtime.sendMessage({ 'message':'openReader',
+		browser.runtime.sendMessage({ 'message':'openReader',
 									 'selectedText': selectedText,
 									 'haveSelection': haveSelection,
-									 'dirRTL': direction }, function(response){})
+									 'dirRTL': direction }, function(response){});
 	}
 	else {
-		chrome.runtime.sendMessage({ 'message':'getSelection',
+		browser.runtime.sendMessage({ 'message':'getSelection',
 								   	 'selectedText': selectedText,
 								   	 'haveSelection': haveSelection,
-								   	 'dirRTL': direction }, function(response){})
+								   	 'dirRTL': direction }, function(response){});
 	}
 }
 
@@ -91,7 +93,7 @@ function is_script_rtl(t) {
 var x;
 var y;
 // Listen for instruction and then return the mouse X,Y coordinates
-chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
+browser.runtime.onMessage.addListener(function(request, sender, sendResponse) {
     if (request.action == 'getMouseCoordinates') {
 		sendResponse({ 'x':x,'y':y });
 	}
@@ -104,7 +106,7 @@ document.addEventListener('mousemove',function(event) {
 
 // Access the extension local storage to determine if the hotkey is enabled
 var hotKeyEnabled = 'false';
-chrome.runtime.sendMessage({message: "getHotkeyEnabledStatus"}, function(response) {
+browser.runtime.sendMessage({message: "getHotkeyEnabledStatus"}, function(response) {
   	hotKeyEnabled = response.status;
 	//console.log(response.status);
 });

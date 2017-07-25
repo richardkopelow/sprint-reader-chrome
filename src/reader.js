@@ -1482,7 +1482,7 @@ function getWordIndexByStep(step) {
 function bindKeys(k) {
 	//console.log(k.keyCode);
 	// KeyCode 32 = Space Bar
-	if (k.keyCode == 32) {
+	if (k.key == ' ') {
 		// We fire a button click event which will in turn fire
 		// the textPlay() function. This ensures we continue to
 		// track data for Google Analytics and prevents a 
@@ -1492,29 +1492,29 @@ function bindKeys(k) {
 		return;
 	}
 	// KeyCode 97 = A key
-	else if (k.keyCode == 97) {
+	else if (k.key == 'a') {
 		textStep(-1);
 	}
 	// KeyCode 115 = S key
-	else if (k.keyCode == 115) {
+	else if (k.key == 's') {
 		textStep(1);
 	}
 	// KeyCode 122 = Z key
-	else if (k.keyCode == 122) {
+	else if (k.key == 'z') {
 		adjustWPM(madvWPMAdjustmentStep*-1);
 	}
 	// KeyCode 120 = X key
-	else if (k.keyCode == 120) {
+	else if (k.key == 'x') {
 		adjustWPM(madvWPMAdjustmentStep);
 	}
 	// KeyCode 107 = K key
-	else if (k.keyCode == 107) {
+	else if (k.key == 'k') {
 		var step = madvLargeStepNumberOfSlides * -1;
 		wordIndex = getWordIndexByStep(step);
 		textStep(-1);
 	}
 	// KeyCode 108 = L key
-	else if (k.keyCode == 108) {
+	else if (k.key == 'l') {
 		var step = madvLargeStepNumberOfSlides;
 		wordIndex = getWordIndexByStep(step);
 		textStep(1);
@@ -1522,7 +1522,7 @@ function bindKeys(k) {
 }
 
 function bindReset(k) {
-	if (String.fromCharCode(k.keyCode) == 'r') {
+	if (k.key == 'r') {
 		if (divPlay.innerHTML == strRestart) {
 			textPlay();	
 		}
@@ -1535,19 +1535,19 @@ function bindReset(k) {
 }
 
 function bindQuit(k) {
-	if (String.fromCharCode(k.keyCode) == 'q') {
+	if (k.key == 'q') {
 		closePopup();
 	}
 }
 
 function bindSelectionLoad(k) {
-	if (String.fromCharCode(k.keyCode) == 'v') {
+	if (k.key == 'v') {
 		loadSelectedTextHistory(0);
 	}
 }
 
 function bindClipboardLoad(k) {
-	if (String.fromCharCode(k.keyCode) == 'c') {
+	if (k.keyCode == 'c') {
 		loadSelectedTextHistory(9);
 	}
 }
